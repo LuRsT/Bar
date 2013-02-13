@@ -1,1 +1,1 @@
-perl bar --command "wicd-cli -d --wireless" --regex "Quality: ([0-9]{1,3})"
+bar --command "wicd-cli -d --wireless" --regex "Quality: ([0-9]{1,3})"
