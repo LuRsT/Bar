@@ -46,26 +46,32 @@ sub show_bar {
     my $tmux  = shift;
     my $mini  = shift;
 
-    my @graph  = qw{ ▁ ▂ ▃ ▅ ▇ };
+    if ( $cmd =~ /$regex/ ) {
+        return show( $1 );
+    }
+}
+
+sub show {
+    my $num = shift;
+
+    my @graph  = qw{ ▁ ▂ ▃ ▄ ▅ ▆ ▇ █};
     my @colors = qw{ green yellow red };
 
-    if ( $cmd =~ /$regex/ ) {
-        my $c;
-        my $g = $graph[  ( ( $1 * 4) / 100 ) ];
+    my $c;
+    my $g = $graph[ ( ( $num * 7) / 100 ) ];
 
-        if    ( $1 > 75 ) { $c = $colors[0]; }
-        elsif ( $1 > 25 ) { $c = $colors[1]; }
-        else              { $c = $colors[2]; }
+    if    ( $num > 75 ) { $c = $colors[0]; }
+    elsif ( $num > 25 ) { $c = $colors[1]; }
+    else              { $c = $colors[2]; }
 
-        my $string = sprintf ( "[%s] %s", $1 . '%', $g );
+    my $string = sprintf ( "[%s] %s", $num . '%', $g );
 
-        if ( $mini ) {
-            $string = sprintf ( "%s", $g );
-        }
-        if ( $tmux ) {
-            return '#[fg=' . $c . ']' . $string . "#[default]\n";
-        }
-
-        return colored [ $c ], $string . "\n";
+    if ( $mini ) {
+        $string = sprintf ( "%s", $g );
     }
+    if ( $tmux ) {
+        return '#[fg=' . $c . ']' . $string . "#[default]\n";
+    }
+
+    return colored [ $c ], $string . "\n";
 }
