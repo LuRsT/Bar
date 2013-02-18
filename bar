@@ -7,12 +7,13 @@ use Term::ANSIColor;
 use Getopt::Long;
 
 my ( $cmd, $regex ) = q{};
-my ( $tmux, $mini, $help ) = 0;
+my ( $tmux, $mini, $help, $reverse ) = 0;
 
 GetOptions('command=s' => \$cmd,
            'regex=s'   => \$regex,
            'tmux'      => \$tmux,
            'mini'      => \$mini,
+           'reverse'   => \$reverse,
            'help'      => \$help);
 
 if ( $help ) { print help(); exit; }
@@ -24,7 +25,7 @@ if ( !defined $cmd   or $cmd   eq q{} or
 
 # Some commands may need treatment
 my $command = join("\n", qx{$cmd} );
-print show_bar( $command, $regex, $tmux, $mini );
+print show_bar( $command, $regex, );
 
 sub help {
     return <<HELP;
@@ -35,6 +36,7 @@ sub help {
     --command <command>, the command that will be run from which we'll extract the info
     --regex <regex>,     regex to extract the number ( from 0-100 ) from the info, note that we're expecting \$1, so use ()
     --mini,              flag to show only the bar
+    --reverse,           return the reverse percentage
     --tmux,              flag to appear on tmux ( we need to treat color differently )
     --help               display this help and exit
 HELP
@@ -43,10 +45,12 @@ HELP
 sub show_bar {
     my $cmd   = shift;
     my $regex = shift;
-    my $tmux  = shift;
-    my $mini  = shift;
 
     if ( $cmd =~ /$regex/ ) {
+        if ( $reverse ){
+            if ( $1 > 50 ){ return show($1 - 100); }
+            if ( $1 < 50 ){ return show(100 - $1); }
+        }
         return show( $1 );
     }
 }
@@ -58,11 +62,12 @@ sub show {
     my @colors = qw{ green yellow red };
 
     my $c;
-    my $g = $graph[ ( ( $num * 7) / 100 ) ];
+    my $index = ( $num * ( scalar( @graph ) - 1 ) ) / 100;
+    my $g = $graph[ $index ];
 
     if    ( $num > 75 ) { $c = $colors[0]; }
     elsif ( $num > 25 ) { $c = $colors[1]; }
-    else              { $c = $colors[2]; }
+    else                { $c = $colors[2]; }
 
     my $string = sprintf ( "[%s] %s", $num . '%', $g );
 
