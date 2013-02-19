@@ -1,9 +1,7 @@
 Bar
 ===
 
-Bar, a command to display a bar
-
-Use this command to generate graph bars to display in the console or tmux of your choosing.
+Do you like [spark](https://github.com/holman/spark)? Do you know Regex? Then you'll like this...
 
 example:
 
