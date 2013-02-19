@@ -49,8 +49,8 @@ sub show_bar {
 
     while ( $cmd =~ /$regex/g ) {
         if ( $reverse ){
-            if ( $1 > 50 ){ return show($1 - 100); }
-            if ( $1 < 50 ){ return show(100 - $1); }
+            if ( $1 > 50 ){ print show($1 - 100); return; }
+            if ( $1 < 50 ){ print show(100 - $1); return; }
         }
         print show( $1 );
     }
